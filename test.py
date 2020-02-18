@@ -3,7 +3,7 @@ import random
 
 #Square Width: 25, Square Height: 25
 
-n = 5
+n = 15
 
 
 class App(tk.Tk):
@@ -17,24 +17,14 @@ class App(tk.Tk):
         self.cellheight = 25
 
         self.rect = {}
-        self.oval = {}
-        for column in range(5):
-            for row in range(5):
-                x1 = column*self.cellwidth
+        for column in range(n):
+            for row in range(n):
+                x1 = column * self.cellwidth
                 y1 = row * self.cellheight
                 x2 = x1 + self.cellwidth
                 y2 = y1 + self.cellheight
                 self.rect[row,column] = self.canvas.create_rectangle(x1,y1,x2,y2, fill="white", tags="rect")
-                
-
-        self.redraw(1000)
-
-    def redraw(self, delay):
-        self.canvas.itemconfig("rect", fill="white")
-        for i in range(10):
-            row = random.randint(0,19)
-            col = random.randint(0,19)
-        self.after(delay, lambda: self.redraw(delay))
+                self.canvas.create_text(((x1 + x2) / 2, (y1 + y2) /2), text="a2")
 
 if __name__ == "__main__":
     app = App()
