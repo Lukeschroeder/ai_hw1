@@ -20,6 +20,7 @@ class App(tk.Tk):
                 x2 = x1 + self.cellwidth
                 y2 = y1 + self.cellheight
                 self.rect[row,column] = self.canvas.create_rectangle(x1,y1,x2,y2, fill="blue", tags="rect")
+                self.oval[row,column] = self.canvas.create_oval(x1+2,y1+2,x2-2,y2-2, fill="blue", tags="oval")
 
         self.redraw(1000)
 
