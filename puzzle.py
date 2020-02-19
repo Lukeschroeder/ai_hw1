@@ -3,44 +3,25 @@ import random
 
 #Square Width: 25, Square Height: 25
 
-n = 5
-class App(tk.Tk):
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
-        self.canvas = tk.Canvas(self, width=n*25, height=n*25, borderwidth=0, highlightthickness=0)
-        self.canvas.pack(side="top", fill="both", expand="true")
-        self.cellwidth = 25
-        self.cellheight = 25
 
-        self.rect = {}
-        self.labels = {}
+class Puzzle:
+    def __init__(self, n):
+
+        # Stored Data
+        self.n = n
         self.movenums = {}
         self.distances = {}
+        self.evaluation = 0
 
-        for x in range(n):
-            for y in range(n):
-                x1 = x * self.cellwidth
-                y1 = y * self.cellheight
-                x2 = x1 + self.cellwidth
-                y2 = y1 + self.cellheight
-
-                if (y + 1) * (x + 1) == n**2:
-                    self.rect[y + 1, x + 1] = self.canvas.create_rectangle(x1,y1,x2,y2, fill="green", outline="white", tags="rect")
-                    break
-
-                self.rect[y + 1, x + 1] = self.canvas.create_rectangle(x1,y1,x2,y2, fill="dark gray", outline="white", tags="rect")
-
-    def addlabel(self, x, y,label):
-        xcoord = (x - 1) * self.cellwidth + self.cellwidth / 2
-        ycoord = (y - 1) * self.cellheight + self.cellheight / 2
-        
-        self.labels[x, y] = self.canvas.create_text((xcoord, ycoord), text=label, font=('fixedsys', 12), fill="black") 
+        # Populate Stored Data
+        self.generatepuzzle()
+        self.calculatemindistances()
+        self.evaluate()
          
-
-
     # Initializes labels containing tkinter objects, 
     # and movenums containing integer move numbers
     def generatepuzzle(self):
+        n = self.n
         i = 0
         for x in range(1, n + 1):
             for y in range(1, n + 1):
@@ -51,13 +32,11 @@ class App(tk.Tk):
                     self.movenums[x, y] = 0
                     break
 
-                self.addlabel(x, y, value)
                 self.movenums[x, y] = value
 
-                
-
-
     def calculatemindistances(self):
+        n = self.n
+
         # Initializes shortest path distances: 0 for [1][1] and -1 otherwise
         for x in range(1, n + 1):
             for y in range(1, n + 1):
@@ -65,6 +44,7 @@ class App(tk.Tk):
                     self.distances[(x, y)] = 0 
                 else:
                     self.distances[(x, y)] = -1
+
         # Add first vertex to queue
         queue = []
         queue.append((1,1))
@@ -89,23 +69,52 @@ class App(tk.Tk):
                     self.distances[(x, y)] = self.distances[(px,py)] + 1
                     queue.append((x, y))
 
+    def printmovenums(self):
+        print("\nMove Nums: ")
+        n = self.n
+        for y in range(1, n + 1):
+            for x in range(1, n + 1):
+                print(self.movenums[(x,y)], end = ' ')
+            print()
 
     def printdistances(self):
+        print("\nShortest Distances: ")
+        n = self.n
         for y in range(1, n + 1):
-            print('\n')
             for x in range(1, n + 1):
                 print(self.distances[(x,y)], end = ' ')
+            print()
+
+    def evaluate(self):
+        n = self.n
+        if self.distances[(n,n)] < 0:
+            k = 0
+            for x in range(1, n+1):
+                for y in range(1, n+1):
+                    if(self.distances[(x,y)]) < 0:
+                        k -= 1
+            self.evaluation = k
+
+        else:
+            self.evaluation = self.distances[(n,n)]
+            
+
+        
+
+
 
                 
   
 if __name__ == "__main__":
-    app = App()
-    app.generatepuzzle()
-    app.calculatemindistances()
+    puz = Puzzle(7)
+    puz.printmovenums()
+    puz.printdistances()
+    print('Evaluation: ', puz.evaluation)
+    
+
     #app.printdistances()
 
     #app.canvas.itemconfig(app.rect[n,n], fill='green')
     #app.canvas.itemconfig(app.label[2,7], text='234')
-    app.mainloop()
     
     
