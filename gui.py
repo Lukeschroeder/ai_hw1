@@ -71,7 +71,3 @@ class Gui(tk.Tk):
 
         self.movenumsonscreen = not self.movenumsonscreen
          
-
-                
-
-    

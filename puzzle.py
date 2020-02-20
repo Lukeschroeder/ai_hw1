@@ -34,6 +34,34 @@ class Puzzle:
 
                 self.movenums[x, y] = value
 
+    # Returns the coordinates of swap and old/new values
+    def swaprandommovenum(self):
+        n = self.n
+
+        x = n
+        y = n
+
+        while x == n and y == n:
+            x = random.randint(1, n)
+            y = random.randint(1, n)
+
+        bound = max(y - 1, n - x, x - 1, n - y)
+        new = random.randint(1, bound)
+        old = self.movenums[x, y]
+
+        self.movenums[x, y] = new
+
+        self.calculatemindistances()
+        self.evaluate()
+
+        return (x, y, old, new)
+
+    
+    def revertswap(self, swp):
+        self.movenums[swp[0], swp[1]] = swp[2]
+        self.calculatemindistances()
+        self.evaluate()
+
     def calculatemindistances(self):
         n = self.n
 
@@ -70,7 +98,7 @@ class Puzzle:
                     queue.append((x, y))
 
     def printmovenums(self):
-        print("\nMove Nums: ")
+        print("\nPuzzle: ")
         n = self.n
         for y in range(1, n + 1):
             for x in range(1, n + 1):
@@ -78,12 +106,15 @@ class Puzzle:
             print()
 
     def printdistances(self):
-        print("\nShortest Distances: ")
+        print("\nSolution: ")
         n = self.n
         for y in range(1, n + 1):
             for x in range(1, n + 1):
                 print(self.distances[(x,y)], end = ' ')
             print()
+
+    def printswap(self, swp):
+        print('Swap: (',swp[0],',',swp[1],'): ', swp[2], '->', swp[3])
 
     def evaluate(self):
         n = self.n
@@ -98,14 +129,3 @@ class Puzzle:
         else:
             self.evaluation = self.distances[(n,n)]
             
-
-        
-                
-  
-if __name__ == "__main__":
-    puz = Puzzle(7)
-    puz.printmovenums()
-    puz.printdistances()
-    print('Evaluation: ', puz.evaluation)
-    
-    

@@ -1,12 +1,61 @@
 from puzzle import Puzzle
 from gui import Gui
+import sys
+
+
+def hillclimbing(dim, iters):
+    puz = Puzzle(dim)
+    puz.printmovenums()
+    puz.printdistances()
+
+    initialevaluation = puz.evaluation
+
+    evaluation = puz.evaluation
+
+    for i in range(1, iters + 1):
+
+        swp = puz.swaprandommovenum()
+
+        # Evaluation dropped so revert swap
+        if puz.evaluation < evaluation:
+            print('\nEvaluation worsened... reverting swap')
+            puz.revertswap(swp)
+            continue
+        else:
+            evaluation = puz.evaluation
+            print('\nIteration: ', i)
+            puz.printswap(swp)
+            print('Evaluation: ', evaluation)
+
+            # UNCOMMENT IF YOU WANT FULL DETAILS OF SWAP           
+            # puz.printmovenums()
+            # puz.printdistances()
+            
+    print('\n----- RESULTS -----')
+    print('Iterations: ', iters)
+    print('Initial Evaluation: ', initialevaluation)
+    print('Final Evaluation: ', evaluation)
+
+    gui = Gui(puz)
+    gui.title('Puzzle')
+    gui.mainloop()
 
 
 
 
-def hillclimbing(iters):
-    print('Calling hill climbing on: ', iters)
 
+def readpositiveint(message):
+        dimstr = input(message)
+        try:
+            dim = int(dimstr)
+        except ValueError:
+            dim = -1
+
+        if dim < 1:
+            print('\nInvalid input...\n')
+            sys.exit()
+
+        return dim
 
 
 
@@ -20,31 +69,20 @@ if __name__ == "__main__":
         i = -1
 
     if i == 1:
-        ns = input('Puzzle dimension: ')
-        try:
-            ni = int(ns)
-        except ValueError:
-            ni = -1
+        dim = readpositiveint('Puzzle dimension: ')
 
-        if ni < 1:
-            print('Invalid puzzle dimension...')
-        else:
-            puz = Puzzle(ni)
-            gui = Gui(puz)
-            gui.title('Puzzle')
-            gui.mainloop()
+        puz = Puzzle(dim)
+        gui = Gui(puz)
+        gui.title('Puzzle')
+        gui.mainloop()
 
     elif i == 2:
-        ns = input('Iterations: ')
-        try:
-            ni = int(ns)
-        except ValueError:
-            ni = -1
+        print('----- Hill Climbing -----\n')
 
-        if ni < 1:
-            print('Invalid iteration number...')
-        else:
-            hillclimbing(ni)
+        dim = readpositiveint('Puzzle dimension: ')
+        iters = readpositiveint('Iterations: ')
+
+        hillclimbing(dim, iters)
 
     elif i == 3:
         print(3)
