@@ -1,6 +1,7 @@
 from puzzle import Puzzle
 from gui import Gui
 import sys
+import itertools
 
 
 def hillclimbing(dim, iters):
@@ -40,6 +41,84 @@ def hillclimbing(dim, iters):
     gui.title('Puzzle')
     gui.mainloop()
 
+
+def crossover(puztuple):
+    puza = puztuple[0]
+    puzb = puztuple[1]
+
+    distsa = puza.distances
+    distsb = puzb.distances
+
+    movesa = puza.movenums
+    movesb = puzb.movenums
+
+    n = puza.n
+
+    outmoves = {}
+
+    for x in range(1, n + 1):
+        for y in range(1, n + 1):
+
+            if(distsa[(x, y)] > distsb[(x, y)]):
+                outmoves[(x, y)] = movesa[(x, y)]
+            else:
+                outmoves[(x, y)] = movesb[(x, y)]
+ 
+    babypuz = Puzzle(n)
+    babypuz.movenums = outmoves
+    babypuz.calculatemindistances()
+    babypuz.evaluate()
+
+    return max([puza, puzb, babypuz], key=lambda puz: puz.evaluation)
+
+
+def geneticalgorithm(dim, n, d):
+    print('Calling Genetic Algorithm with population:', n , 'Selection rate:', d)
+
+    # Generation
+    print('Generating initial population... ')
+    population = [Puzzle(dim) for i in range(1, n + 1)]
+    print('Population generated of size: ', int(len(population)))
+
+    for p in population:
+        print(p.evaluation)
+
+    # Selection 1
+    print('Applying Selection...')
+    population.sort(key = lambda puz: puz.evaluation, reverse = True)
+    population = population[:int(len(population) * d)]
+    print('Population selected of size: ', int(len(population)))
+
+    for p in population:
+        print(p.evaluation)
+
+    # Crossover
+    newpop = []
+    print('Applying Crossover...')
+    for i in itertools.product(population, population):
+        newpop.append(crossover(i))
+    population = newpop
+    print('Population mated of size: ', int(len(population)))
+
+
+    for p in population:
+        print(p.evaluation)
+
+    # Selection 2
+    print('Applying Selection...')
+    population.sort(key = lambda puz: puz.evaluation, reverse = True)
+    population = population[:int(len(population) * d)]
+    print('Population selected of size: ', int(len(population)))
+
+    for p in population:
+        print(p.evaluation)
+
+
+
+
+
+
+    
 
 
 
@@ -85,7 +164,14 @@ if __name__ == "__main__":
         hillclimbing(dim, iters)
 
     elif i == 3:
-        print(3)
+        print('----- Genetic Algorithm -----\n')
+
+        dim = readpositiveint('Puzzle dimension: ')
+        n = 100 
+        d = .1
+
+        # dim: puzzle dimension, n: population size, d: rate selected
+        geneticalgorithm(dim, n, d)
 
     else:
         print("Invalid choice...")
