@@ -8,6 +8,7 @@ import time
 class Gui(tk.Tk):
     def __init__(self, puz):
         tk.Tk.__init__(self)
+        self.title('Puzzle')
         self.puz = puz
         self.movenums = puz.movenums
         self.distances = puz.distances
@@ -42,6 +43,8 @@ class Gui(tk.Tk):
 
                 self.rectobj[(x, y)] = self.canvas.create_rectangle(x1,y1,x2,y2, fill="dark gray", outline="white", tags="rect")
                 self.labels[(x, y)] = self.canvas.create_text((xcoord, ycoord), text=' ', font=('fixedsys', 12), fill="black")
+
+        self.showmovenums()
 
     def showmovenums(self):
         n = self.n

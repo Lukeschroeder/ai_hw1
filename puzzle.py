@@ -7,13 +7,13 @@ import random
 class Puzzle:
     def __init__(self, n):
 
-        # Stored Data
+        # Initial data
         self.n = n
         self.movenums = {}
         self.distances = {}
         self.evaluation = 0
 
-        # Populate Stored Data
+        # Generate puzzle and populate stored data
         self.generatepuzzle()
         self.calculatemindistances()
         self.evaluate()
@@ -107,11 +107,5 @@ if __name__ == "__main__":
     puz.printmovenums()
     puz.printdistances()
     print('Evaluation: ', puz.evaluation)
-    
-
-    #app.printdistances()
-
-    #app.canvas.itemconfig(app.rect[n,n], fill='green')
-    #app.canvas.itemconfig(app.label[2,7], text='234')
     
     
