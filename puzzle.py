@@ -19,7 +19,20 @@ class Puzzle:
         self.generatepuzzle()
         self.calculatemindistances()
         self.evaluate()
-         
+
+    def fromfile(self, f):
+        n = self.n
+        for y in range(1, n + 1):
+            line = f.readline().split()
+            new = list(map(int, line))
+            for x in range(1, n + 1):
+                self.movenums[(x, y)] = new[x - 1]
+        self.calculatemindistances()
+        self.evaluate()
+                
+
+
+
     # Initializes labels containing tkinter objects, 
     # and movenums containing integer move numbers
     def generatepuzzle(self):
@@ -163,7 +176,7 @@ class Puzzle:
                 else:
                     distances[(x, y)] = -1
 
-        # Add first vertex to queue
+        # Add first vertex to priority queue with heuristic function
         vert = (1, 1)
         vertices = [(self.heur(vert, self.movenums[(x, y)], n) + 0, vert)]
 
@@ -187,12 +200,57 @@ class Puzzle:
 
             # For each neighbor
             for (x,y) in ns:
-                # If neighbor unvisited and in range, update distance add it to queue
+                # If neighbor unvisited and in range, update distance add it to priority queue
                 if (x >= 1 and x <= n and  y >= 1 and y <= n and distances[(x, y)] < 0):
                     distances[(x, y)] = distances[(px,py)] + 1
                     vert = (x, y)
                     heapq.heappush(vertices, (self.heur(vert, self.movenums[(x, y)], n) + distances[(x,y)], vert))
         print('\nDid not find goal: ', -1)
+
+    def spf(self):
+        n = self.n
+        distances = {}
+        movenums = self.movenums
+        
+        # Initializes shortest path distances: 0 for [1][1] and -1 otherwise
+        for x in range(1, n + 1):
+            for y in range(1, n + 1):
+                if ( x * y == 1):
+                    distances[(x, y)] = 0 
+                else:
+                    distances[(x, y)] = -1
+
+        # Add first vertex to priority queue
+        vert = (1, 1)
+        vertices = [(0, vert)]
+
+        heapq.heapify(vertices)
+
+        # While priority queue non-empty
+        while vertices:
+            # Pop head of queue as parent
+            current = heapq.heappop(vertices)[1]
+            px = current[0]
+            py = current[1]
+            # Get move num of parent
+            movenum = movenums[(px, py)]
+            # If movenum = 0: found goal node, no neighbors to access
+            if movenum == 0:
+                print('\nFound goal: ', distances[(px, py)])
+                return
+
+            # Get neighbors
+            ns = [(px, py - movenum), (px, py + movenum), (px + movenum, py), (px - movenum, py)]
+
+            # For each neighbor
+            for (x,y) in ns:
+                # If neighbor unvisited and in range, update distance add it to queue
+                if (x >= 1 and x <= n and  y >= 1 and y <= n and distances[(x, y)] < 0):
+                    distances[(x, y)] = distances[(px,py)] + 1
+                    vert = (x, y)
+                    heapq.heappush(vertices, (distances[(x,y)], vert))
+        print('\nDid not find goal: ', -1)
+
 
     def bfs(self):
         n = self.n

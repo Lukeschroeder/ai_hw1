@@ -161,13 +161,21 @@ def readpositiveint(message):
 
 if __name__ == "__main__":
 
-    i = readpositiveint('\nPuzzle Generation Tactics \n1: Random Puzzle\n2: Hill Climbing\n3: Genetic Algorithm\n\nEnter your choice: ')
+    i = readpositiveint('\nPuzzle Generation Tactics \n1: From File\n2: Random Puzzle\n3: Hill Climbing\n4: Genetic Algorithm\n\nEnter your choice: ')
 
     if i == 1:
+        print('\n----- Generate from File -----\n')
+        filename = input('Input filename: ')
+        f = open(filename, 'r')
+        puz = Puzzle(int(f.readline()) )
+        puz.fromfile(f)
+
+    elif i == 2:
+        print('\n----- Random Puzzle -----\n')
         dim = readpositiveint('Puzzle dimension: ')
         puz = Puzzle(dim)
 
-    elif i == 2:
+    elif i == 3:
         print('\n----- Hill Climbing -----\n')
 
         dim = readpositiveint('Puzzle dimension: ')
@@ -175,7 +183,7 @@ if __name__ == "__main__":
 
         puz = hillclimbing(dim, iters)
 
-    elif i == 3:
+    elif i == 4:
         print('\n----- Genetic Algorithm -----\n')
 
         dim = readpositiveint('Puzzle dimension: ')
@@ -191,7 +199,7 @@ if __name__ == "__main__":
     puz.printmovenums()
     puz.printdistances()
 
-    i = readpositiveint('\nPuzzle generated... \n1: Display puzzle\n2: Run A*\n3: Run BFS/SPF\nEnter your choice: ')
+    i = readpositiveint('\nPuzzle generated... \n1: Display puzzle\n2: Run A*\n3: Run BFS\n4: Run SPF\nEnter your choice: ')
 
     if i == 1:
         gui = Gui(puz)
@@ -203,6 +211,9 @@ if __name__ == "__main__":
 
     elif i == 3:
         puz.bfs()
+
+    elif i == 4:
+        puz.spf()
 
     else: 
         print('Invalid choice...')
