@@ -128,4 +128,5 @@ class Puzzle:
 
         else:
             self.evaluation = self.distances[(n,n)]
-            
+        
+
