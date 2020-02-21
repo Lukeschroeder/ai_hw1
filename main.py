@@ -159,21 +159,6 @@ def readpositiveint(message):
 
 
 
-def bfs(puz):
-    evaluation = puz.evaluation
-    print(evaluation)
-
-def spf(puz):
-    evaluation = puz.evaluation
-    print(evaluation)
-
-
-def astar(puz):
-    evaluation = puz.evaluation
-    print(evaluation)
-
-
-
 if __name__ == "__main__":
 
     i = readpositiveint('\nPuzzle Generation Tactics \n1: Random Puzzle\n2: Hill Climbing\n3: Genetic Algorithm\n\nEnter your choice: ')
@@ -202,20 +187,23 @@ if __name__ == "__main__":
     else:
         print('Invalid choice...')
         sys.exit()
-    
 
-    i = readpositiveint('\nPuzzle generated... \n1: Display puzzle\n2: Run A*\n3: Run BFS\n4: Run SPF\nEnter your choice: ')
+    puz.printmovenums()
+    puz.printdistances()
+
+    i = readpositiveint('\nPuzzle generated... \n1: Display puzzle\n2: Run A*\n3: Run BFS/SPF\nEnter your choice: ')
 
     if i == 1:
         gui = Gui(puz)
         gui.title('Puzzle')
         gui.mainloop()
+
     elif i == 2:
         puz.astar()
+
     elif i == 3:
         puz.bfs()
-    elif i == 4:
-        puz.spf()
+
     else: 
         print('Invalid choice...')
     
