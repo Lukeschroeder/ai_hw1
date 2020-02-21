@@ -211,11 +211,11 @@ if __name__ == "__main__":
         gui.title('Puzzle')
         gui.mainloop()
     elif i == 2:
-        astar(puz)
+        puz.astar()
     elif i == 3:
-        bfs(puz)
+        puz.bfs()
     elif i == 4:
-        spf(puz)
+        puz.spf()
     else: 
         print('Invalid choice...')
     

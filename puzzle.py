@@ -128,5 +128,16 @@ class Puzzle:
 
         else:
             self.evaluation = self.distances[(n,n)]
+
+
+    def astar(self):
+        print('Calling A Star with evaluation: ', self.evaluation)
+
+    def bfs(self):
+        print('Calling bfs with evaluation: ', self.evaluation)
+
+    def spf(self):
+        print('Calling spf with evaluation: ', self.evaluation)
+
         
 
