@@ -2,7 +2,9 @@ from puzzle import Puzzle
 from gui import Gui
 import sys
 import itertools
-
+from timeit import default_timer as timer
+import matplotlib.pyplot as plt
+import random
 
 def hillclimbing(dim, iters):
     puz = Puzzle(dim)
@@ -35,7 +37,6 @@ def hillclimbing(dim, iters):
     print('\n----- RESULTS -----')
     print('Initial Evaluation: ', initialevaluation)
     print('Final Evaluation: ', evaluation)
-
     return puz
 
 
@@ -159,8 +160,10 @@ def readpositiveint(message):
 
 
 
-if __name__ == "__main__":
 
+# --------------------------------------------------------------------------------------------
+# Main User Input Execution Loop
+def executeuserinputloop():
     i = readpositiveint('\nPuzzle Generation Tactics \n1: From File\n2: Random Puzzle\n3: Hill Climbing\n4: Genetic Algorithm\n\nEnter your choice: ')
 
     if i == 1:
@@ -217,4 +220,152 @@ if __name__ == "__main__":
 
     else: 
         print('Invalid choice...')
+
+# Testing population generation algorithms loop
+def testpopulationgenerationalgs():
+    i = readpositiveint('\nTest...\n1: Genetic\n2: Hill Climbing\n\nEnter your choice: ')
+    if i == 1:
+        dim = 11
+        times = []
+        evaluations = []
+        iterations = [1, 2, 3, 4, 5, 8, 10, 15]
+
+        for it in iterations:
+            vertices = []
+            for i in range(1, 51):
+                start = timer()
+                puz = geneticalgorithm(dim, it)
+                end = timer()
+                vert = (end - start, puz.evaluation)
+                vertices.append(vert)
+            
+            time = 0
+            evaluation = 0
+            for x in vertices:
+                time += x[0]
+                evaluation += x[1]
+            avgtime = time / len(vertices)
+            avgevaluation = evaluation / len(vertices)
+            times.append(avgtime)
+            evaluations.append(avgevaluation)
+        plt.plot(times, evaluations)
+        plt.plot(times, evaluations, 'or')
+        plt.title('Genetic Algorithm Computation Time vs. Evaluation, n = 11')
+        plt.xlabel('Avg time over 50 runs (s)', fontsize=12)
+        plt.ylabel('Avg evaluation', fontsize=12)
+        plt.show()
+
+    elif i == 2:
+        dim = 11
+        times = []
+        evaluations = []
+        iterations = [10, 20, 50, 75, 100, 200, 500, 750, 1000, 2000, 5000, 10000]
+
+        for it in iterations:
+            vertices = []
+            for i in range(1, 51):
+                start = timer()
+                puz = hillclimbing(dim, it)
+                end = timer()
+                vert = (end - start, puz.evaluation)
+                vertices.append(vert)
+            
+            time = 0
+            evaluation = 0
+            for x in vertices:
+                time += x[0]
+                evaluation += x[1]
+            avgtime = time / len(vertices)
+            avgevaluation = evaluation / len(vertices)
+            times.append(avgtime)
+            evaluations.append(avgevaluation)
+        plt.plot(times, evaluations)
+        plt.plot(times, evaluations, 'or')
+        plt.title('Hill Climbing Computation Time vs. Evaluation, n = 11')
+        plt.xlabel('Avg time over 50 runs (s)', fontsize=12)
+        plt.ylabel('Avg evaluation', fontsize=12)
+        plt.show()
+
+    else:
+        print('Invalid choice...')
+
+
+def testpathfindingalgs():
+    populationsize = 50
+
+    print('Generating random population...')
+
+    population = []
+    for n in range(1, populationsize + 1):
+        dim = random.randint(3, 14)
+        algorithmtype = random.randint(1, 2)
+
+        # Genetic
+        if algorithmtype == 1:
+            alg = 'GEN'
+            iters = random.randint(1, 30)
+            print('Algorithm: ', alg, ' Dim: ', dim, 'Iters: ', iters, end=' ')
+
+            puz = geneticalgorithm(dim, iters)
+
+        # Hill Climbing
+        elif algorithmtype == 2:
+            alg = 'HC'
+            iters = random.randint(1, 10000)
+            print('Algorithm: ', alg, ' Dim: ', dim, 'Iters: ', iters, end=' ')
+            puz = hillclimbing(dim, iters)
+
+        print('Evaluation: ', puz.evaluation)
+        population.append(puz)
+
+
+    astartimes = []
+    bstartimes = []
+    sstartimes = []
+    dims = []
+
+    for p in population: 
+        dim = p.n
+
+        dims.append(dim)
+
+        start = timer()
+        for i in range(1, 100):
+            puz.astar()
+        end = timer()
+        astartimes.append(end - start)
+
+        start = timer()
+        for i in range(1, 100):
+            puz.bfs()
+        end = timer()
+        bstartimes.append(end - start)
+
+        start = timer()
+        for i in range(1, 100):
+            puz.spf()
+        end = timer()
+        sstartimes.append(end - start)
+
+    plt.plot(dims, astartimes, 'or')
+
+    plt.plot(dims, bstartimes, 'og')
+
+    plt.plot(dims, sstartimes, 'ob')
+
     
+    plt.title('A*, BFS, and SPF Comparison')
+    plt.xlabel('Dimension of puzzle', fontsize=12)
+    plt.ylabel('Time for 100 Runs of Algorithm', fontsize=12)
+    plt.show()
+
+
+
+
+
+if __name__ == '__main__':
+    executeuserinputloop()
+    # testpopulationgenerationalgs()
+    # testpathfindingalgs()
+
+
